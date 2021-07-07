@@ -57,7 +57,7 @@ def getMaxUR(ForceChoice, BoltCalcStr, sheetCalcStr, ForceCombinedStr, ForceStr)
         ws = wb[sheetCalcStr]
         your_data = pandas.DataFrame(ws.values)
         
-        ex = [your_data[13][32], your_data[13][33], your_data[13][34],your_data[13][35]]
+        ex = [your_data[13][32], your_data[13][33], your_data[13][34],your_data[13][35], your_data[13][36], your_data[13][37], your_data[13][38], your_data[13][39]]
         ex1 = max(ex)
         EXX.append(ex1)
         print(EXX)
