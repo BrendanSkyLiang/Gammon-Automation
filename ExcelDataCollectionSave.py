@@ -110,16 +110,18 @@ def getMaxUR(ForceChoice, BoltCalcStr, ForceCombinedStr, ForceStr):
 '----------------------------------------------------------------------------------------------------------------------------------------------------'
 # Get Min Max Forces Data
 
-MaxFx = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MaxFx')
-MaxFy = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MaxFy')
-MaxFz = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MaxFz')
-MinFx = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MinFx')
-MinFy = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MinFy')
-MinFz = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MinFz')
-MaxMx = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MaxMx')
-MaxMy = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MaxMy')
-MinMx = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MinMx')
-MinMy = pandas.read_excel(r'C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\CombinedMinMax.xlsx', sheet_name = 'MinMy')
+MinMaxLoc = r'C:\Users\brendanlia\Desktop\Airport Excel Data\090721Data\CombinedMinMax.xlsx'
+
+MaxFx = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxFx')
+MaxFy = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxFy')
+MaxFz = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxFz')
+MinFx = pandas.read_excel(MinMaxLoc, sheet_name = 'MinFx')
+MinFy = pandas.read_excel(MinMaxLoc, sheet_name = 'MinFy')
+MinFz = pandas.read_excel(MinMaxLoc, sheet_name = 'MinFz')
+MaxMx = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxMx')
+MaxMy = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxMy')
+MinMx = pandas.read_excel(MinMaxLoc, sheet_name = 'MinMx')
+MinMy = pandas.read_excel(MinMaxLoc, sheet_name = 'MinMy')
 
 MaxFx = pandas.DataFrame.transpose(MaxFx)
 MaxFy = pandas.DataFrame.transpose(MaxFy)
