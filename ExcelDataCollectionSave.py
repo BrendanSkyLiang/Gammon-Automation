@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jul  7 17:12:09 2021
-
-@author: brendanlia
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Wed Jul  7 09:17:36 2021
 
 @author: brendanlia
