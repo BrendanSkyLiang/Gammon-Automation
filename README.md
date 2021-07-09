@@ -1,2 +1,2 @@
 # Gammon-Automation
-#Automation of tedious tasks during internship at Gammon suring the summer of 2021
+#Automation of tasks and procssing / organizing large data sets of loading combinations
