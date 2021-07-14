@@ -22,12 +22,12 @@ for a in range(357):
     current = wDisp.loc[(a+1)*224-1]
     current1 = current.values.tolist()
     current1[4] = 0
-    current1[6] = abs(current1[6]) * -1
-    current1[7] = abs(current1[7]) * -1
-    current1[8] = abs(current1[8]) * -1
-    current1[9] = abs(current1[9]) * -1
-    current1[10] = abs(current1[10]) * -1
-    current1[11] = abs(current1[11]) * -1
+    current1[6] = current1[6] * -1
+    current1[7] = current1[7] * -1
+    current1[8] = current1[8] * -1
+    current1[9] = current1[9] * -1
+    current1[10] = current1[10] * -1
+    current1[11] = current1[11] * -1
     StageZeros.append(current1)
     
 StageZeros = pandas.DataFrame(StageZeros)
