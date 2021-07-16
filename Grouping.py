@@ -117,6 +117,13 @@ MinFx = MinFx.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 MinFy = MinFy.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 MinFz = MinFz.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 
+MaxFx.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
+MaxFy.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
+MaxFz.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
+
+MinFx.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
+MinFy.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
+MinFz.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
 
 for a in range(len(JTMean)):
     data = [MaxFx.iloc[a],MaxFy.iloc[a],MaxFz.iloc[a],MinFx.iloc[a],MinFy.iloc[a],MinFz.iloc[a]]
