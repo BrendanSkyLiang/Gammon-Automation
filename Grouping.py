@@ -95,11 +95,11 @@ Combined = pandas.concat([TyphoonF, JTForces])
 
 # Drop all Fz Zeros
 
-# indexNames = Combined[Combined['Fz (kN)'] == 0].index
-# Combined.drop(indexNames, inplace = False)
-# Combined = Combined.reset_index(drop = True)
-
 CombinedSumGroup = Combined.groupby(['Node ID','Result Case'],as_index = False).sum()
+
+indexNames = CombinedSumGroup[CombinedSumGroup['Fz (kN)'] == 0].index
+CombinedSumGroup1 = CombinedSumGroup.drop(indexNames, inplace = False)
+CombinedSumGroup = CombinedSumGroup1.reset_index(drop = True)
 
 # Min Max
 
@@ -109,14 +109,15 @@ MaxFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transf
 
 MinFx = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fx (kN)'].transform(min) == CombinedSumGroup['Fx (kN)']]
 MinFy = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fy (kN)'].transform(min) == CombinedSumGroup['Fy (kN)']]
-# MinFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transform(CombinedSumGroup['Fz (kN)']> 0.min()) == CombinedSumGroup['Fz (kN)']]
+MinFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transform(min) == CombinedSumGroup['Fz (kN)']]
 
-Dup = CombinedSumGroup
+# Dup = CombinedSumGroup
 
-indexNames = Dup[Dup['Fz (kN)'] == 0].index
-Dup1 = Dup.drop(indexNames, inplace = False)
-Dup2 = Dup1.reset_index(drop = True)
-MinFz = Dup2[Dup2.groupby(['Node ID'])['Fz (kN)'].transform(min) == Dup2['Fz (kN)']]
+# indexNames = Dup[Dup['Fz (kN)'] == 0].index
+# Dup1 = Dup.drop(indexNames, inplace = False)
+# Dup2 = Dup1.reset_index(drop = True)
+
+# MinFz = Dup2[Dup2.groupby(['Node ID'])['Fz (kN)'].transform(min) == Dup2['Fz (kN)']]
 
 MaxFx = MaxFx.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 MaxFy = MaxFy.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
@@ -141,9 +142,8 @@ for a in range(len(JTMean)):
     data1 = pandas.DataFrame(data)
     globals()['%s' %JTMean['Name'][a]] = pandas.DataFrame(data1)
     
-
+# Excel Writer
 writer = pandas.ExcelWriter('JackingTowerExport.xlsx', engine='xlsxwriter')  
-
 
 for a in range(len(JTMean)):
     globals()['%s' %JTMean['Name'][a]].to_excel(writer, sheet_name = '%s' %JTMean['Name'][a])
@@ -151,3 +151,4 @@ for a in range(len(JTMean)):
 writer.save()
 
 print('completed saving of file')
+
