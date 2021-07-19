@@ -34,39 +34,35 @@ Typhoon = []
 JTFF = []
 TyphoonF = []
 
+
 for a in range(len(Coords)):
-    if len(Coords['Name'][a]) == 17:
+    if 'Typh' in Coords['Name'][a]:
+        Typhoon.append(Coords.loc[a])
+    else:
         JT.append(Coords.loc[a])
-    else: 
-        pass
-    
-for b in range(len(Coords)):
-    if len(Coords['Name'][b]) > 17:
-        Typhoon.append(Coords.loc[b])
-    else: 
-        pass
-    
-for a in range(len(Forces)):
-    if len(Forces['Node ID'][a]) == 17:
-        JTFF.append(Forces.loc[a])
-    else: 
-        pass
-    
+        
 for b in range(len(Forces)):
-    if len(Forces['Node ID'][b]) > 17:
+    if 'Typh' in Forces['Node ID'][b]:
         TyphoonF.append(Forces.loc[b])
-    else: 
-        pass
-    
+    else:
+        JTFF.append(Forces.loc[b])
+
+print('completed sorting typhoon and jacking towers')
+
 JT = pandas.DataFrame(JT).reset_index(drop = True)
 Typhoon = pandas.DataFrame(Typhoon).reset_index(drop = True)
 
 JTForces = pandas.DataFrame(JTFF).reset_index(drop = True)
 TyphoonF = pandas.DataFrame(TyphoonF).reset_index(drop = True)
 
-JT['Name'] = JT['Name'].str[:-6]
 
-JTForces['Node ID'] = JTForces['Node ID'].str[:-6]
+JT['Name'] = JT['Name'].str[:11]
+        
+print('completed name adjustment for JT')
+        
+JTForces['Node ID'] = JTForces['Node ID'].str[:11]
+        
+print('completed JTForces name adjustment')
 
 JTMean = JT.groupby(['Name'], as_index = False).mean()
 
@@ -89,13 +85,19 @@ for a in range(len(Typhoon)):
         
 Typhoon['JTName'] = typhoonGroup        
             
+print('completed assigning typhoon supports to respective jacking towers')
 # Replace TyphBrc name with correct JT Group
 
 for a in range(len(Typhoon)):
-    # TyphoonF.replace(to_replace = Typhoon['Name'][a], value = Typhoon['JTName'][a],regex = True)
     TyphoonF['Node ID'] = TyphoonF['Node ID'].replace(Typhoon['Name'][a], Typhoon['JTName'][a])
 
 Combined = pandas.concat([TyphoonF, JTForces])
+
+# Drop all Fz Zeros
+
+# indexNames = Combined[Combined['Fz (kN)'] == 0].index
+# Combined.drop(indexNames, inplace = False)
+# Combined = Combined.reset_index(drop = True)
 
 CombinedSumGroup = Combined.groupby(['Node ID','Result Case'],as_index = False).sum()
 
@@ -107,7 +109,14 @@ MaxFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transf
 
 MinFx = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fx (kN)'].transform(min) == CombinedSumGroup['Fx (kN)']]
 MinFy = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fy (kN)'].transform(min) == CombinedSumGroup['Fy (kN)']]
-MinFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transform(min) == CombinedSumGroup['Fz (kN)']]
+# MinFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transform(CombinedSumGroup['Fz (kN)']> 0.min()) == CombinedSumGroup['Fz (kN)']]
+
+Dup = CombinedSumGroup
+
+indexNames = Dup[Dup['Fz (kN)'] == 0].index
+Dup1 = Dup.drop(indexNames, inplace = False)
+Dup2 = Dup1.reset_index(drop = True)
+MinFz = Dup2[Dup2.groupby(['Node ID'])['Fz (kN)'].transform(min) == Dup2['Fz (kN)']]
 
 MaxFx = MaxFx.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 MaxFy = MaxFy.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
@@ -125,6 +134,8 @@ MinFx.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
 MinFy.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
 MinFz.drop_duplicates(subset = ['Node ID'], keep = 'first', inplace = True)
 
+print("collected min max's")
+
 for a in range(len(JTMean)):
     data = [MaxFx.iloc[a],MaxFy.iloc[a],MaxFz.iloc[a],MinFx.iloc[a],MinFy.iloc[a],MinFz.iloc[a]]
     data1 = pandas.DataFrame(data)
@@ -139,17 +150,4 @@ for a in range(len(JTMean)):
     
 writer.save()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print('completed saving of file')
