@@ -8,31 +8,41 @@ Created on Wed Jul  7 09:17:36 2021
 import numpy
 import xlsxwriter
 import pandas
-import easygui 
 import openpyxl
 from openpyxl import load_workbook
 import time
 import win32com.client
+import xlrd
+from win32com import client
 
 '--------------------------------------------------------------------------------------------------------------------------------------------------'
 #Def Functions
 
 def refreshExcel():
     xlapp = win32com.client.DispatchEx("Excel.Application")
-    wb = xlapp.Workbooks.Open(r"C:\Users\brendanlia\Desktop\Airport Excel Data\19 tree base result check\BoltCalc3.xlsx")  # The File location will need to be edited for different file locations
+    # The File location will need to be edited for different file locations
+    wb = xlapp.Workbooks.Open(r"C:\Users\brendanlia\Desktop\URGENT\BoltCalc3.xlsx") 
     wb.RefreshAll()
     xlapp.CalculateUntilAsyncQueriesDone()
     wb.Save()
     xlapp.Quit()
     
+    
+def refreshExcel1(filePath):
+    xlapp = win32com.client.DispatchEx("Excel.Application")
+    # The File location will need to be edited for different file locations
+    wb = xlapp.Workbooks.Open(filePath) 
+    wb.RefreshAll()
+    xlapp.CalculateUntilAsyncQueriesDone()
+    wb.Save()
+    xlapp.Quit()
 '----------------------------------------------------------------------------------------------------------------------------------------------------'
     
 def getMaxUR(ForceChoice, BoltCalcStr, ForceCombinedStr, ForceStr):
     # ForceChoice = selction of MaxFx, MaxFy, ... , MinFy
     # BoltCalcStr = file name of the bolt calc spreadsheet, input as a string e.g. "BoltCalc.xlsx"
-    # SheetCalcStr = the name of the sheet within BoltCalcStr that is the desired bolt configuration, input as string, e.g. "BP (CAP14)"
     # ForceCombinedStr = the file name of the combined forces xlsx doc, input as string, e.g. "CombinedMinMax.xlsx"
-    #ForceStr = the Force Choice in string format, input as string, e.g. "MaxFx"
+    # ForceStr = the Force Choice in string format, input as string, e.g. "MaxFx"
     
     TUR = []
     BUR = []
@@ -40,44 +50,70 @@ def getMaxUR(ForceChoice, BoltCalcStr, ForceCombinedStr, ForceStr):
     
     for a in range(len(ForceChoice.columns)): #Input new Force Values
         
-        Group = ForceChoice[a][10]
+        Group = ForceChoice[a][11]
         size = len(Group)-2
         cut = Group[2:][:size - 2]
         sheetCalcStr = cut
         
         workbook = load_workbook(filename = BoltCalcStr)
         sheet = workbook[sheetCalcStr]
-        if ForceChoice[a][6] > 0: #Compression
+        if ForceChoice[a][7] > 0: #Compression
             sheet["F6"] = 0
-            sheet["F7"] = abs(ForceChoice[a][6]) 
-        elif ForceChoice[a][6] < 0: #Tension
-            sheet["F6"] = abs(ForceChoice[a][6])
+            sheet["F7"] = abs(ForceChoice[a][7]) 
+        elif ForceChoice[a][7] < 0: #Tension
+            sheet["F6"] = abs(ForceChoice[a][7])
             sheet["F7"] = 0
         else:     
             sheet["F6"] = 0
             sheet["F7"] = 0
         
-        sheet["F8"] = ForceChoice[a][4]
-        sheet["F9"] = ForceChoice[a][5]
-        sheet["F10"] = abs(ForceChoice[a][8])
-        sheet["F11"] = abs(ForceChoice[a][7])
+        sheet["F8"] = ForceChoice[a][5]
+        sheet["F9"] = ForceChoice[a][6] 
+        sheet["F10"] = abs(ForceChoice[a][9])
+        sheet["F11"] = abs(ForceChoice[a][8])
+        
+        sheet['L1'] = ForceChoice[a][3] # Node 
+        sheet['E4'] = ForceChoice[a][4] # Case
+        
+        
         workbook.save(filename = BoltCalcStr)
        
-        Loc = "C:/Users/brendanlia/Desktop/Airport Excel Data/19 tree base result check/"
+        # Will need to modify Loc String Below
+        Loc = "C:/Users/brendanlia/Desktop/URGENT/"
         DFID = ForceStr + str(a) + ".xlsx"
         REFID = Loc + DFID
         workbook = load_workbook(filename = BoltCalcStr)
         workbook.save(filename = REFID)
-        # ws1 = workbook[sheetCalcStr] 
-        # ws1.save(REFID)
         
+        #ExcelRefresh
+        time.sleep(0.2)
+        refreshExcel1(REFID)
         
-       
-        #Allow Excel to refresh
+        # Excel to PDF
+        PDF = ForceStr + str(a) + ".pdf"
+        PDFID = Loc + PDF
+        excel = client.Dispatch("Excel.Application")
+        sheets = excel.Workbooks.Open(REFID)
+        
+        if sheetCalcStr == 'A-1':
+            sheetindex = 1
+        elif sheetCalcStr == 'A-2':
+            sheetindex = 2
+        elif sheetCalcStr == 'B':
+            sheetindex = 3
+        elif sheetCalcStr == 'C-1':
+            sheetindex = 4
+        elif sheetCalcStr == 'C-2':
+            sheetindex = 5
+        work_sheets = sheets.Worksheets[sheetindex]
+        work_sheets.ExportAsFixedFormat(0, PDFID)
+        sheets.Close(True)
+        
+        # Allow Excel to refresh
         time.sleep(0.2)
         refreshExcel()
         
-        #Get UR Values and Calculate Max
+        # Get UR Values and Calculate Max
         wb = load_workbook(filename = BoltCalcStr, data_only = True)
         ws = wb[sheetCalcStr]
         your_data = pandas.DataFrame(ws.values)
@@ -87,17 +123,17 @@ def getMaxUR(ForceChoice, BoltCalcStr, ForceCombinedStr, ForceStr):
         print(a)
         
         
-    #append to CombinedForces Excel
+    # append to CombinedForces Excel
     workbook = load_workbook(filename = ForceCombinedStr)
     sheet = workbook[ForceStr]
-    sheet["L1"] = "Max Bolt Tension UR"
-    sheet["M1"] = "Max Plate Bending UR"
-    sheet["N1"] = "Max Plate Shear UR"
+    sheet["N1"] = "Max Bolt Tension UR"
+    sheet["O1"] = "Max Plate Bending UR"
+    sheet["P1"] = "Max Plate Shear UR"
     for a in range(len(TUR)):
         b = str(a+2)
-        L = "L"
-        M = "M"
-        N = "N"
+        L = "N"
+        M = "O"
+        N = "P"
         d = L+b
         e = M+b
         f = N+b
@@ -108,9 +144,10 @@ def getMaxUR(ForceChoice, BoltCalcStr, ForceCombinedStr, ForceStr):
     workbook.save(filename = ForceCombinedStr)
 
 '----------------------------------------------------------------------------------------------------------------------------------------------------'
+
 # Get Min Max Forces Data
 
-MinMaxLoc = r'C:\Users\brendanlia\Desktop\Airport Excel Data\090721Data\CombinedMinMax.xlsx'
+MinMaxLoc = r'C:\Users\brendanlia\Desktop\URGENT\CombinedMinMax.xlsx'
 
 MaxFx = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxFx')
 MaxFy = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxFy')
@@ -123,6 +160,8 @@ MaxMy = pandas.read_excel(MinMaxLoc, sheet_name = 'MaxMy')
 MinMx = pandas.read_excel(MinMaxLoc, sheet_name = 'MinMx')
 MinMy = pandas.read_excel(MinMaxLoc, sheet_name = 'MinMy')
 
+
+# Transpose for easier data access by column
 MaxFx = pandas.DataFrame.transpose(MaxFx)
 MaxFy = pandas.DataFrame.transpose(MaxFy)
 MaxFz = pandas.DataFrame.transpose(MaxFz)
@@ -133,6 +172,7 @@ MaxMx = pandas.DataFrame.transpose(MaxMx)
 MaxMy = pandas.DataFrame.transpose(MaxMy)
 MinMx = pandas.DataFrame.transpose(MinMx)
 MinMy = pandas.DataFrame.transpose(MinMy)
+
 
 getMaxUR(MaxFx, "BoltCalc3.xlsx", "CombinedMinMax.xlsx", "MaxFx")
 print("Completed MaxFx")
@@ -154,5 +194,6 @@ getMaxUR(MinMx, "BoltCalc3.xlsx", "CombinedMinMax.xlsx", "MinMx")
 print("Completed MinMx")
 getMaxUR(MinMy, "BoltCalc3.xlsx", "CombinedMinMax.xlsx", "MinMy")
 print("Completed MinMy")
+
 
 input('Press Enter to Close')
