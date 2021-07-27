@@ -16,11 +16,10 @@ import sys
 import os
 import re
 import io
-import math
+import math as mafmatics 
 
 def distance(x1,y1,z1,x2,y2,z2):
-    return math.sqrt((x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2)
-
+    return mafmatics.sqrt((x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2)
 
 Coords = pandas.read_excel('position.xlsx')
 Forces = pandas.read_csv('C:/Users/brendanlia/Desktop/Jacking Tower/CSVs/combined_csv.csv')
@@ -55,7 +54,6 @@ Typhoon = pandas.DataFrame(Typhoon).reset_index(drop = True)
 JTForces = pandas.DataFrame(JTFF).reset_index(drop = True)
 TyphoonF = pandas.DataFrame(TyphoonF).reset_index(drop = True)
 
-
 JT['Name'] = JT['Name'].str[:11]
         
 print('completed name adjustment for JT')
@@ -78,7 +76,7 @@ for a in range(len(Typhoon)):
         y1 = JTMean['Y (m)'][b]
         z1 = JTMean['Z (m)'][b]
         dist = distance(x1,y1,z1,x2,y2,z2)
-        if dist < 16:
+        if ((dist < 16) and (dist > 10)) and ((y2 + 3 ) > y1):     #or ((abs(y1-y2) < 2) and (abs(x2-x1) < 12)): #and ((x2-x1) > 5)
             typhoonGroup.append(JTMean['Name'][b])
         else:
             pass
@@ -110,14 +108,6 @@ MaxFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transf
 MinFx = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fx (kN)'].transform(min) == CombinedSumGroup['Fx (kN)']]
 MinFy = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fy (kN)'].transform(min) == CombinedSumGroup['Fy (kN)']]
 MinFz = CombinedSumGroup[CombinedSumGroup.groupby(['Node ID'])['Fz (kN)'].transform(min) == CombinedSumGroup['Fz (kN)']]
-
-# Dup = CombinedSumGroup
-
-# indexNames = Dup[Dup['Fz (kN)'] == 0].index
-# Dup1 = Dup.drop(indexNames, inplace = False)
-# Dup2 = Dup1.reset_index(drop = True)
-
-# MinFz = Dup2[Dup2.groupby(['Node ID'])['Fz (kN)'].transform(min) == Dup2['Fz (kN)']]
 
 MaxFx = MaxFx.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
 MaxFy = MaxFy.drop(['Mx (kNm)', 'My (kNm)', 'Mz (kNm)'], axis = 1)
@@ -151,4 +141,6 @@ for a in range(len(JTMean)):
 writer.save()
 
 print('completed saving of file')
+
+
 
