@@ -4,7 +4,6 @@ Created on Thu Jul 29 13:02:54 2021
 
 @author: brendanlia
 """
-
 from cv2 import imread
 from numpy import average
 from numpy import subtract
@@ -59,9 +58,6 @@ def jpgtoCsv(jpgName,csvName):
     # Interpolation of values
     # Identify location of xmin, xmax, ymin and ymax
     xmin, xmax, ymin, ymax = 89, 910, 571, 87
-    # xmax = 910
-    # ymin = 571
-    # ymax = 87
     xpixel = xmax-xmin
     ypixel = ymin-ymax
     xrange = [0,350]
@@ -78,26 +74,22 @@ def jpgtoCsv(jpgName,csvName):
     for i in range(len(greenindex)):
         greenx = xlin[greenindex[i][0]-xmin]
         greeny = ylin[greenindex[i][1]-ymax]
-        gg = [greenx,greeny]
-        greeninterp.append(gg)
+        greeninterp.append([greenx,greeny])
     
     for i in range(len(blueindex)):
         bluex = xlin[blueindex[i][0]-xmin]
         bluey = ylin[blueindex[i][1]-ymax]
-        bb = [bluex,bluey]
-        blueinterp.append(bb)
+        blueinterp.append([bluex,bluey])
         
     for i in range(len(purpleindex)):
         purplex = xlin[purpleindex[i][0]-xmin]
         purpley = ylin[purpleindex[i][1]-ymax]
-        pp = [purplex,purpley]
-        purpleinterp.append(pp)
+        purpleinterp.append([purplex,purpley])
         
     for i in range(len(redindex)):
         redx = xlin[redindex[i][0]-xmin]
         redy = ylin[redindex[i][1]-ymax]
-        rr = [redx,redy]
-        redinterp.append(rr)
+        redinterp.append([redx,redy])
     
     gex = pd.DataFrame(greeninterp)
     bex = pd.DataFrame(blueinterp)
@@ -108,8 +100,6 @@ def jpgtoCsv(jpgName,csvName):
     compiled.columns = ['gx','gy','bx','by','px','py','rx','ry']
     
     compiled.to_csv(csvName,index = False)
-
-
 
 t = time.time()
 
