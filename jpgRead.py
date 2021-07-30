@@ -16,15 +16,9 @@ import time
 
 def jpgtoCsv(jpgName,csvName):
     img = imread(jpgName)
-    # img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-    # # plt.imshow(img)
     
-    # # Find indexes of RGB values close to the line colours
+    # Find indexes of RGB values close to the line colours
     sensitivity = 5 # <----- can be changed
-    # green = [158,171,117]
-    # blue = [104,125,162]
-    # purple = [126,113,140]
-    # red = [150,91,94]
     
     green = [117,171,158]
     blue = [162,125,104]
@@ -55,7 +49,7 @@ def jpgtoCsv(jpgName,csvName):
             else:
                 pass
                   
-    # Interpolation of values
+    # Interpolate values
     # Identify location of xmin, xmax, ymin and ymax
     xmin, xmax, ymin, ymax = 89, 910, 571, 87
     xpixel = xmax-xmin
@@ -65,12 +59,12 @@ def jpgtoCsv(jpgName,csvName):
     
     xlin = linspace(xrange[0],xrange[1],xpixel)
     ylin = linspace(yrange[0],yrange[1],ypixel)
-            
+         
     greeninterp = []
     blueinterp = []
     purpleinterp = [] 
     redinterp = []  
-            
+                
     for i in range(len(greenindex)):
         greenx = xlin[greenindex[i][0]-xmin]
         greeny = ylin[greenindex[i][1]-ymax]
@@ -103,11 +97,11 @@ def jpgtoCsv(jpgName,csvName):
 
 t = time.time()
 
-for i in range(1):  # <--- number of pages
+for i in range(20):  # <--- number of pages
     for j in range(8): # <--- number of graphs per page
         picName = 'WindTapSourcePage' + str(i+1) + ',' + str(j) + '.jpg'
         docName = 'csvWindTapSourcePage' + str(i+1) + ',' + str(j) + '.csv'
         jpgtoCsv(picName, docName)
-        
+
 elapsed = time.time()-t
 print(str(elapsed) + 'sec')
