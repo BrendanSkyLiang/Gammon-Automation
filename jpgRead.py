@@ -9,7 +9,7 @@ from numpy import average
 from numpy import subtract
 from numpy import linspace
 import pandas as pd
-import time
+from time import time
 
 # cv uses BGR while matplotlib uses RGB
 # Load image as RGB 3D array
@@ -20,6 +20,8 @@ def jpgtoCsv(jpgName,csvName):
     # Find indexes of RGB values close to the line colours
     sensitivity = 5 # <----- can be changed
     
+    
+    # col  = [B,G,R]
     green = [117,171,158]
     blue = [162,125,104]
     purple = [140,113,126]
@@ -51,7 +53,7 @@ def jpgtoCsv(jpgName,csvName):
                   
     # Interpolate values
     # Identify location of xmin, xmax, ymin and ymax
-    xmin, xmax, ymin, ymax = 89, 910, 571, 87
+    xmin, xmax, ymin, ymax = 89, 910, 573, 87
     xpixel = xmax-xmin
     ypixel = ymin-ymax
     xrange = [0,350]
@@ -95,13 +97,14 @@ def jpgtoCsv(jpgName,csvName):
     
     compiled.to_csv(csvName,index = False)
 
-t = time.time()
+t = time()
 
-for i in range(20):  # <--- number of pages
+for i in range(180,213):  # <--- number of pages Note, range(a,b) = a, a+1, ... , b-1:  it doesn't include b
     for j in range(8): # <--- number of graphs per page
         picName = 'WindTapSourcePage' + str(i+1) + ',' + str(j) + '.jpg'
-        docName = 'csvWindTapSourcePage' + str(i+1) + ',' + str(j) + '.csv'
+        docName = 'Pg' + str(i+1) + ',' + str(j) + '.csv'
+        print(docName)
         jpgtoCsv(picName, docName)
 
-elapsed = time.time()-t
+elapsed = time()-t
 print(str(elapsed) + 'sec')
